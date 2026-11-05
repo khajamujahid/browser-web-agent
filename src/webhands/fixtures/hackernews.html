@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Hacker News</title>
+  <style>
+    body { margin: 0; background: #f6f6ef; color: #111; font: 13px/1.45 Verdana, sans-serif; }
+    header { background: #ff6600; padding: 4px 8px; }
+    header a { color: #000; font-weight: 700; text-decoration: none; }
+    table { border-collapse: collapse; margin: 8px 0 24px; }
+    td { vertical-align: top; padding: 1px 4px; }
+    .rank { color: #555; min-width: 2.5ch; display: inline-block; text-align: right; }
+    .titleline a { color: #111; text-decoration: none; }
+    .subtext, .subtext a { color: #828282; font-size: 10px; }
+    footer { color: #666; padding: 0 12px 24px; max-width: 46rem; }
+  </style>
+</head>
+<body>
+  <header><a href="#top">Hacker News</a></header>
+  <table>
+    <tr class="athing" id="1">
+      <td><span class="rank">1.</span></td>
+      <td><span class="titleline"><a href="https://example.com/webhands">Show HN: A browser agent that writes CSV, then stops</a></span></td>
+    </tr>
+    <tr>
+      <td colspan="2" class="subtext"><span class="score">142 points</span> | <a href="https://example.com/webhands#comments">38 comments</a></td>
+    </tr>
+    <tr class="athing" id="2">
+      <td><span class="rank">2.</span></td>
+      <td><span class="titleline"><a href="https://example.com/traces">Playwright traces got small enough to read</a></span></td>
+    </tr>
+    <tr>
+      <td colspan="2" class="subtext"><span class="score">318 points</span> | <a href="https://example.com/traces#comments">96 comments</a></td>
+    </tr>
+    <tr class="athing" id="3">
+      <td><span class="rank">3.</span></td>
+      <td><span class="titleline"><a href="https://example.com/local-first">Local-first agents for people who do not want a cloud browser</a></span></td>
+    </tr>
+    <tr>
+      <td colspan="2" class="subtext"><span class="score">256 points</span> | <a href="https://example.com/local-first#comments">74 comments</a></td>
+    </tr>
+    <tr class="athing" id="4">
+      <td><span class="rank">4.</span></td>
+      <td><span class="titleline"><a href="https://example.com/selectors">CSS selectors, explained without the magic</a></span></td>
+    </tr>
+    <tr>
+      <td colspan="2" class="subtext"><span class="score">201 points</span> | <a href="https://example.com/selectors#comments">51 comments</a></td>
+    </tr>
+    <tr class="athing" id="5">
+      <td><span class="rank">5.</span></td>
+      <td><span class="titleline"><a href="https://example.com/offline-tests">Ask HN: How do you test scrapers with the network unplugged?</a></span></td>
+    </tr>
+    <tr>
+      <td colspan="2" class="subtext"><span class="score">178 points</span> | <a href="https://example.com/offline-tests#comments">143 comments</a></td>
+    </tr>
+    <tr class="athing" id="6">
+      <td><span class="rank">6.</span></td>
+      <td><span class="titleline"><a href="https://example.com/sqlite-queue">SQLite as a job queue</a></span></td>
+    </tr>
+    <tr>
+      <td colspan="2" class="subtext"><span class="score">390 points</span> | <a href="https://example.com/sqlite-queue#comments">120 comments</a></td>
+    </tr>
+    <tr class="athing" id="7">
+      <td><span class="rank">7.</span></td>
+      <td><span class="titleline"><a href="https://example.com/a11y-tree">A pocket guide to the accessibility tree</a></span></td>
+    </tr>
+    <tr>
+      <td colspan="2" class="subtext"><span class="score">164 points</span> | <a href="https://example.com/a11y-tree#comments">29 comments</a></td>
+    </tr>
+    <tr class="athing" id="8">
+      <td><span class="rank">8.</span></td>
+      <td><span class="titleline"><a href="https://example.com/bookmarklets">I retired my bookmarklets for a 200-line agent</a></span></td>
+    </tr>
+    <tr>
+      <td colspan="2" class="subtext"><span class="score">221 points</span> | <a href="https://example.com/bookmarklets#comments">67 comments</a></td>
+    </tr>
+    <tr class="athing" id="9">
+      <td><span class="rank">9.</span></td>
+      <td><span class="titleline"><a href="https://example.com/http3">HTTP/3 in one diagram</a></span></td>
+    </tr>
+    <tr>
+      <td colspan="2" class="subtext"><span class="score">275 points</span> | <a href="https://example.com/http3#comments">44 comments</a></td>
+    </tr>
+    <tr class="athing" id="10">
+      <td><span class="rank">10.</span></td>
+      <td><span class="titleline"><a href="https://example.com/sandbox">Headless Chrome, CI, and the sandbox flag</a></span></td>
+    </tr>
+    <tr>
+      <td colspan="2" class="subtext"><span class="score">133 points</span> | <a href="https://example.com/sandbox#comments">58 comments</a></td>
+    </tr>
+    <tr class="athing" id="11">
+      <td><span class="rank">11.</span></td>
+      <td><span class="titleline"><a href="https://example.com/flaky">The cost of a flaky end-to-end test</a></span></td>
+    </tr>
+    <tr>
+      <td colspan="2" class="subtext"><span class="score">188 points</span> | <a href="https://example.com/flaky#comments">81 comments</a></td>
+    </tr>
+    <tr class="athing" id="12">
+      <td><span class="rank">12.</span></td>
+      <td><span class="titleline"><a href="https://example.com/read-the-dom">Read the DOM you are about to click</a></span></td>
+    </tr>
+    <tr>
+      <td colspan="2" class="subtext"><span class="score">97 points</span> | <a href="https://example.com/read-the-dom#comments">16 comments</a></td>
+    </tr>
+  </table>
+  <footer>
+    Local WebHands fixture for offline runs. Same story markup the agent looks for on the public front page. Not the live site.
+  </footer>
+</body>
+</html>

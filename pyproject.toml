@@ -1,0 +1,49 @@
+[project]
+name = "webhands"
+version = "0.1.0"
+description = "Autonomous browser agent that navigates, clicks, types, and extracts."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{ name = "Khaja Mujahiddin Mohammed" }]
+keywords = ["playwright", "browser-agent", "automation", "web-agent"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Internet :: WWW/HTTP :: Browsers",
+]
+dependencies = [
+  "playwright>=1.49,<2",
+  "fastapi>=0.115,<1",
+  "uvicorn>=0.32,<1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3,<9", "httpx>=0.27,<1"]
+
+[project.scripts]
+webhands = "webhands.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/khajamujahid/browser-web-agent"
+Portfolio = "https://portfolio-one-theta-71.vercel.app/"
+Source = "https://github.com/khajamujahid/browser-web-agent"
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+webhands = ["fixtures/*.html", "ui/*.html"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q"
+filterwarnings = [
+  "ignore:Using `httpx` with `starlette.testclient` is deprecated:UserWarning",
+]

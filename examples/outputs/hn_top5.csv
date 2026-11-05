@@ -1,0 +1,6 @@
+rank,title,url,points,comments
+1,"Show HN: A browser agent that writes CSV, then stops",https://example.com/webhands,142,38
+2,Playwright traces got small enough to read,https://example.com/traces,318,96
+3,Local-first agents for people who do not want a cloud browser,https://example.com/local-first,256,74
+4,"CSS selectors, explained without the magic",https://example.com/selectors,201,51
+5,Ask HN: How do you test scrapers with the network unplugged?,https://example.com/offline-tests,178,143
