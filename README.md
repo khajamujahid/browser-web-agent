@@ -8,6 +8,8 @@ The default path is free and offline. It drives a real Chromium through [Playwri
 
 Built by [Khaja Mujahiddin Mohammed](https://portfolio-one-theta-71.vercel.app/). Source: [github.com/khajamujahid/browser-web-agent](https://github.com/khajamujahid/browser-web-agent).
 
+Live replay: [https://webhands-mocha.vercel.app](https://webhands-mocha.vercel.app)
+
 ## What it is
 
 WebHands is a small Python agent for people who want to see browser automation as a product, not a pile of selectors.
@@ -155,11 +157,13 @@ Presets on the page are the two examples above. Other sentences that match the s
 
 ## Hosted demo
 
-The static replay is the `demo/` directory. It plays the recorded offline runs in the browser, including the step log and the table. A goal it does not have on file does not produce invented rows.
+Live replay: [https://webhands-mocha.vercel.app](https://webhands-mocha.vercel.app)
+
+The page plays the recorded offline runs, including the step log and the table. A goal it does not have on file does not produce invented rows.
 
 Playwright cannot run on Vercel. A serverless function has no long-lived Chromium process, and the browser binary is far larger than the function bundle limit (Chromium alone is about 190 MB). The hosted page is a replay, not a cloud browser. Run `webhands serve` when you want a live session.
 
-Live demo: see the URL below once this repo's Vercel project is published. Until then, serve it yourself:
+The same files are in `demo/` if you want to serve them yourself:
 
 ```bash
 python -m http.server -d demo 8765
