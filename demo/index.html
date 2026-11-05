@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WebHands — a browser agent</title>
+  <meta name="description" content="WebHands turns a plain-language goal into browser steps: navigate, click, type, and extract. Offline by default." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23c2410c'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='ui-monospace,monospace' font-size='13' fill='%23fff7ed'%3Ewh%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,650&family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --paper: #f3efe4;
+      --ink: #1b1914;
+      --soft: #5c564c;
+      --line: #d4ccbc;
+      --mark: #c2410c;
+      --mark-soft: #fff1e8;
+      --console: #221f1a;
+      --console-ink: #f6f1e7;
+      --console-dim: #d4ccbc;
+      --good: #1f6b45;
+      --danger: #9f1239;
+      color-scheme: light;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(900px 420px at 0% -10%, #efe2cc 0%, transparent 55%),
+        var(--paper);
+      color: var(--ink);
+      font-family: Outfit, "Avenir Next", "Segoe UI", sans-serif;
+      font-size: 17px;
+      line-height: 1.45;
+    }
+    body::before {
+      content: "";
+      display: block;
+      height: 6px;
+      background: var(--mark);
+    }
+    .sheet { max-width: 1120px; margin: 0 auto; padding: 28px 20px 72px; }
+    header.top {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 16px;
+      align-items: end;
+    }
+    .mark {
+      width: 52px;
+      height: 52px;
+      background: var(--mark);
+      color: #fff7ed;
+      display: grid;
+      place-items: center;
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 16px;
+    }
+    .eyebrow {
+      margin: 0 0 4px;
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--mark);
+    }
+    h1 {
+      margin: 0;
+      font-family: Fraunces, "Iowan Old Style", Georgia, serif;
+      font-weight: 560;
+      font-size: clamp(2.4rem, 5vw, 4.3rem);
+      letter-spacing: -0.03em;
+      line-height: 0.95;
+      max-width: 12ch;
+    }
+    .pill {
+      margin: 0;
+      border: 1px solid var(--ink);
+      padding: 6px 10px;
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .lede { max-width: 42rem; color: var(--soft); margin: 18px 0 0; }
+    .hands {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      list-style: none;
+      padding: 0;
+      margin: 18px 0 0;
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 13px;
+    }
+    .hands span { color: var(--mark); margin-right: 6px; }
+    .banner {
+      margin: 22px 0 0;
+      padding: 12px 14px;
+      background: var(--mark-soft);
+      border-left: 3px solid var(--mark);
+      font-size: 15px;
+    }
+    .banner code { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.92em; }
+    .composer { margin-top: 22px; }
+    label.goal-label {
+      display: block;
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 88px;
+      resize: vertical;
+      border: 1px solid var(--ink);
+      background: #fffdf8;
+      padding: 12px 14px;
+      font: 18px/1.4 Fraunces, Georgia, serif;
+      color: var(--ink);
+    }
+    textarea:focus-visible, button:focus-visible, a:focus-visible, input:focus-visible {
+      outline: 2px solid var(--mark);
+      outline-offset: 3px;
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .chip, .run, .downloads a, .check {
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+    }
+    .chip {
+      background: transparent;
+      border: 1px solid var(--ink);
+      padding: 8px 10px;
+      cursor: pointer;
+    }
+    .chip:hover { background: var(--ink); color: var(--paper); }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 18px;
+      align-items: center;
+      margin-top: 12px;
+    }
+    .run {
+      background: var(--ink);
+      color: var(--paper);
+      border: 0;
+      padding: 12px 16px;
+      font-size: 14px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .run:disabled { opacity: 0.55; cursor: progress; }
+    .check { font-size: 13px; display: flex; gap: 8px; align-items: center; }
+    #note { flex-basis: 100%; margin: 0; min-height: 1.3em; color: var(--soft); }
+    #note[data-kind="error"] { color: var(--danger); }
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 18px;
+      margin-top: 22px;
+    }
+    .console {
+      background: var(--console);
+      color: var(--console-ink);
+      min-height: 340px;
+      padding: 14px 14px 18px;
+    }
+    .console-bar, .results-bar {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: baseline;
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .console-bar { color: var(--console-dim); margin-bottom: 12px; }
+    #steps-empty { color: var(--console-dim); margin: 8px 0 0; }
+    #steps { list-style: none; padding: 0; margin: 0; }
+    #steps li {
+      display: grid;
+      grid-template-columns: 2.2rem 5.2rem minmax(0, 1fr);
+      gap: 4px 10px;
+      padding: 8px 0;
+      border-top: 1px solid rgba(243, 239, 228, 0.14);
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 13px;
+    }
+    #steps .op { color: #fdba74; text-transform: uppercase; }
+    #steps .detail { overflow-wrap: anywhere; }
+    #steps .obs { grid-column: 2 / -1; color: var(--console-dim); }
+    #steps li.fail .op { color: #fda4af; }
+    .results { border: 1px solid var(--line); background: rgba(255, 253, 248, 0.65); padding: 14px; min-height: 340px; }
+    .results h2 {
+      margin: 0;
+      font-family: Fraunces, Georgia, serif;
+      font-size: 1.7rem;
+      font-weight: 560;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+    .downloads { display: flex; gap: 8px; }
+    .downloads a {
+      color: var(--ink);
+      border: 1px solid var(--ink);
+      text-decoration: none;
+      padding: 4px 8px;
+      letter-spacing: 0.06em;
+    }
+    .table-wrap { overflow-x: auto; margin-top: 12px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    caption.sr {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+    th {
+      text-align: left;
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--soft);
+      padding: 0 8px 8px 0;
+      border-bottom: 1px solid var(--ink);
+    }
+    td { padding: 8px 12px 8px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    td a { color: var(--ink); }
+    #table-empty { color: var(--soft); }
+    footer {
+      margin-top: 28px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      color: var(--soft);
+      font-size: 14px;
+    }
+    footer a { color: var(--ink); }
+    footer p { margin: 4px 0; }
+    @media (max-width: 860px) {
+      header.top { grid-template-columns: auto 1fr; }
+      .pill { grid-column: 1 / -1; justify-self: start; }
+      .split { grid-template-columns: 1fr; }
+      h1 { max-width: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sheet">
+    <header class="top">
+      <div class="mark" aria-hidden="true">wh</div>
+      <div>
+        <p class="eyebrow">WebHands</p>
+        <h1>An agent with hands for the web.</h1>
+      </div>
+      <p class="pill" id="engine">Starting</p>
+    </header>
+    <p class="lede">
+      Type a goal. WebHands opens a page, clicks and types when the goal asks it to, and brings back a table.
+      The default path is offline: local pages, no API key, no paid browser.
+    </p>
+    <ol class="hands">
+      <li><span>01</span>Navigate</li>
+      <li><span>02</span>Click</li>
+      <li><span>03</span>Type</li>
+      <li><span>04</span>Extract</li>
+    </ol>
+    <div class="banner" id="banner">
+      <p id="banner-demo">
+        Recorded replay. Vercel cannot launch Playwright: a serverless function has no Chromium process, and the browser binary does not fit the function size limit.
+        The steps you play here are real offline runs. <code>webhands serve</code> on your machine drives a live browser.
+      </p>
+      <p id="banner-local" hidden>
+        Playwright is running on this machine. Goals use local fixtures unless you check Live Hacker News. This UI never calls an LLM.
+      </p>
+    </div>
+
+    <section class="composer">
+      <label class="goal-label" for="goal">Goal</label>
+      <textarea id="goal" maxlength="500">Get the top 5 Hacker News titles and save them to CSV</textarea>
+      <div class="chips" role="group" aria-label="Example goals">
+        <button type="button" class="chip" data-stem="hn_top5" data-goal="Get the top 5 Hacker News titles and save them to CSV">Hacker News, top 5</button>
+        <button type="button" class="chip" data-stem="python_books" data-goal="Search the bookstore for Python books under $30 and save them to JSON">Python books under $30</button>
+      </div>
+      <div class="actions">
+        <button type="button" class="run" id="run">Run agent</button>
+        <label class="check" id="live-wrap">
+          <input id="live" type="checkbox" />
+          Live Hacker News
+        </label>
+        <p id="note" role="status"></p>
+      </div>
+    </section>
+
+    <div class="split">
+      <section class="console" aria-label="Agent log">
+        <div class="console-bar"><span>Agent log</span><span id="mode-label">Waiting</span></div>
+        <p id="steps-empty">Steps land here. Nothing is clicked until you run a goal.</p>
+        <ol id="steps" aria-live="polite"></ol>
+      </section>
+      <section class="results" aria-label="Extracted rows">
+        <div class="results-bar">
+          <h2 id="extracted-title">Extracted</h2>
+          <div class="downloads">
+            <a id="csv-link" hidden>CSV</a>
+            <a id="json-link" hidden>JSON</a>
+          </div>
+        </div>
+        <div class="table-wrap" id="table-wrap">
+          <p id="table-empty">No rows yet.</p>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      <p>Khaja Mujahiddin Mohammed</p>
+      <p>
+        <a href="https://portfolio-one-theta-71.vercel.app/">Portfolio</a>
+        ·
+        <a href="https://github.com/khajamujahid/browser-web-agent">browser-web-agent</a>
+        ·
+        <a href="https://github.com/khajamujahid">GitHub</a>
+      </p>
+    </footer>
+  </div>
+  <script>
+    (function () {
+      var mode = "bare";
+      var traces = { runs: [] };
+      var generation = 0;
+      var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var goalInput = document.getElementById("goal");
+      var runButton = document.getElementById("run");
+      var note = document.getElementById("note");
+      var labels = {
+        rank: "Rank",
+        title: "Title",
+        url: "URL",
+        points: "Points",
+        comments: "Comments",
+        author: "Author",
+        price: "Price",
+        format: "Format",
+        level: "Level",
+        text: "Text"
+      };
+      var numeric = { rank: true, points: true, comments: true, price: true };
+
+      document.querySelectorAll(".chip").forEach(function (chip) {
+        chip.addEventListener("click", function () {
+          goalInput.value = chip.dataset.goal || "";
+          goalInput.focus();
+        });
+      });
+      runButton.addEventListener("click", onRun);
+      goalInput.addEventListener("keydown", function (event) {
+        if ((event.metaKey || event.ctrlKey) && event.key === "Enter") onRun();
+      });
+
+      boot();
+
+      function boot() {
+        fetch("/api/health", { cache: "no-store" })
+          .then(function (response) { return response.ok ? response.json() : null; })
+          .catch(function () { return null; })
+          .then(function (health) {
+            if (health && health.ok && health.engine === "playwright") {
+              setMode("local");
+              return;
+            }
+            return fetch(new URL("data/traces.json", window.location.href), { cache: "no-store" })
+              .then(function (response) {
+                if (!response.ok) throw new Error("missing traces");
+                return response.json();
+              })
+              .then(function (payload) {
+                traces = payload;
+                setMode("demo");
+              });
+          })
+          .catch(function () {
+            if (mode !== "local") setMode("bare");
+          });
+      }
+
+      function setMode(next) {
+        mode = next;
+        var demoBanner = document.getElementById("banner-demo");
+        var localBanner = document.getElementById("banner-local");
+        var engine = document.getElementById("engine");
+        var label = document.getElementById("mode-label");
+        if (next === "local") {
+          demoBanner.hidden = true;
+          localBanner.hidden = false;
+          engine.textContent = "Local Chromium";
+          label.textContent = "Rules planner";
+        } else if (next === "demo") {
+          demoBanner.hidden = false;
+          localBanner.hidden = true;
+          document.getElementById("live-wrap").hidden = true;
+          engine.textContent = "Recorded replay";
+          label.textContent = "Playback";
+        } else {
+          engine.textContent = "Not connected";
+          label.textContent = "Idle";
+        }
+      }
+
+      function onRun() {
+        var goal = goalInput.value.trim();
+        if (!goal) {
+          setNote("Give the agent a goal.", "error");
+          return;
+        }
+        if (mode === "local") runLocal(goal);
+        else if (mode === "demo") replayGoal(goal);
+        else setNote("Start the live UI with webhands serve, or open the hosted demo.", "error");
+      }
+
+      function runLocal(goal) {
+        var mine = ++generation;
+        arm(mine);
+        clearOutput();
+        fetch("/api/runs", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ goal: goal, live: document.getElementById("live").checked })
+        }).then(function (response) {
+          if (!response.ok) {
+            return response.json().catch(function () { return {}; }).then(function (payload) {
+              if (mine !== generation) return;
+              setNote(errorText(payload, response.status), "error");
+              disarm(mine);
+            });
+          }
+          return response.json().then(function (created) { return poll(created.id, mine, goal); });
+        }).catch(function () {
+          if (mine !== generation) return;
+          setNote("The UI could not reach the local agent.", "error");
+          disarm(mine);
+        });
+      }
+
+      function poll(id, mine, goal) {
+        var started = Date.now();
+        function tick() {
+          if (mine !== generation) return;
+          fetch("/api/runs/" + id)
+            .then(function (response) { return response.json(); })
+            .then(function (run) {
+              if (mine !== generation) return;
+              renderSteps(run.steps || []);
+              if (run.status === "done") {
+                renderTable(run.columns || [], run.rows || []);
+                setDownloads(run.csv || "", run.json || "", stemFor(goal));
+                setNote(run.rows.length + " rows · " + run.mode + " · " + run.planner + " planner", "");
+                disarm(mine);
+                return;
+              }
+              if (run.status === "error") {
+                setNote(run.error || "The run failed.", "error");
+                disarm(mine);
+                return;
+              }
+              if (Date.now() - started > 60000) {
+                setNote("The run took too long.", "error");
+                disarm(mine);
+                return;
+              }
+              window.setTimeout(tick, 300);
+            })
+            .catch(function () {
+              if (mine !== generation) return;
+              setNote("Lost the run status.", "error");
+              disarm(mine);
+            });
+        }
+        tick();
+      }
+
+      function replayGoal(goal) {
+        var match = (traces.runs || []).find(function (item) {
+          return item.result && item.result.goal === goal;
+        });
+        clearOutput();
+        if (!match) {
+          setNote("This hosted page only replays recorded offline runs. It will not invent rows for a new goal. Run the same words locally with webhands, or pick a recorded goal.", "error");
+          return;
+        }
+        var mine = ++generation;
+        var result = match.result;
+        var steps = result.steps || [];
+        arm(mine);
+        var index = 0;
+        function finish() {
+          if (mine !== generation) return;
+          renderTable(result.columns || [], result.rows || []);
+          setDownloads(toCsv(result.columns || [], result.rows || []), JSON.stringify(result, null, 2) + "\n", stemFor(goal));
+          setNote((result.rows || []).length + " rows · recorded " + result.mode + " run", "");
+          disarm(mine);
+        }
+        function reveal() {
+          if (mine !== generation) return;
+          if (reduced) {
+            renderSteps(steps);
+            finish();
+            return;
+          }
+          index += 1;
+          renderSteps(steps.slice(0, index));
+          if (index < steps.length) {
+            window.setTimeout(reveal, 420);
+            return;
+          }
+          finish();
+        }
+        if (!steps.length) {
+          finish();
+          return;
+        }
+        reveal();
+      }
+
+      function arm(mine) {
+        if (mine !== generation) return;
+        runButton.disabled = true;
+        runButton.textContent = "Working";
+      }
+      function disarm(mine) {
+        if (mine !== generation) return;
+        runButton.disabled = false;
+        runButton.textContent = "Run agent";
+      }
+      function setNote(text, kind) {
+        note.textContent = text;
+        if (kind) note.setAttribute("data-kind", kind);
+        else note.removeAttribute("data-kind");
+      }
+      function errorText(payload, status) {
+        if (payload && typeof payload.detail === "string") return payload.detail;
+        if (status === 409) return "An agent is already browsing. Wait for it to finish.";
+        return "The run did not start.";
+      }
+      function stemFor(goal) {
+        var chip = Array.prototype.find.call(document.querySelectorAll(".chip"), function (item) {
+          return item.dataset.goal === goal;
+        });
+        return (chip && chip.dataset.stem) || "webhands";
+      }
+      function clearOutput() {
+        setNote("", "");
+        renderSteps([]);
+        var existing = document.getElementById("result-table");
+        if (existing) existing.remove();
+        document.getElementById("table-empty").hidden = false;
+        document.getElementById("table-empty").textContent = "No rows yet.";
+        document.getElementById("extracted-title").textContent = "Extracted";
+        hideDownload(document.getElementById("csv-link"));
+        hideDownload(document.getElementById("json-link"));
+      }
+      function renderSteps(steps) {
+        var list = document.getElementById("steps");
+        var empty = document.getElementById("steps-empty");
+        list.replaceChildren();
+        empty.hidden = steps.length > 0;
+        steps.forEach(function (step) {
+          var item = document.createElement("li");
+          if (step.ok === false) item.className = "fail";
+          var n = document.createElement("span");
+          n.className = "n";
+          n.textContent = String(step.n).padStart(2, "0");
+          var op = document.createElement("span");
+          op.className = "op";
+          op.textContent = step.op || "";
+          var detail = document.createElement("span");
+          detail.className = "detail";
+          detail.textContent = step.detail || "";
+          item.append(n, op, detail);
+          if (step.observation) {
+            var obs = document.createElement("span");
+            obs.className = "obs";
+            obs.textContent = step.observation;
+            item.append(obs);
+          }
+          list.append(item);
+        });
+      }
+      function renderTable(columns, rows) {
+        var wrap = document.getElementById("table-wrap");
+        var empty = document.getElementById("table-empty");
+        var existing = document.getElementById("result-table");
+        if (existing) existing.remove();
+        document.getElementById("extracted-title").textContent = rows.length + (rows.length === 1 ? " row" : " rows");
+        if (!rows.length) {
+          empty.hidden = false;
+          empty.textContent = "The page returned no rows.";
+          return;
+        }
+        empty.hidden = true;
+        var table = document.createElement("table");
+        table.id = "result-table";
+        var caption = document.createElement("caption");
+        caption.className = "sr";
+        caption.textContent = "Rows extracted by the agent";
+        var head = document.createElement("thead");
+        var headRow = document.createElement("tr");
+        columns.forEach(function (column) {
+          var cell = document.createElement("th");
+          cell.textContent = labels[column] || column;
+          cell.scope = "col";
+          if (numeric[column]) cell.className = "num";
+          headRow.append(cell);
+        });
+        head.append(headRow);
+        var body = document.createElement("tbody");
+        rows.forEach(function (row) {
+          var tr = document.createElement("tr");
+          columns.forEach(function (column) {
+            var cell = document.createElement("td");
+            if (numeric[column]) cell.className = "num";
+            var value = row[column];
+            var text = value === null || value === undefined ? "" : String(value);
+            if (/^https?:\/\//i.test(text)) {
+              var link = document.createElement("a");
+              link.href = text;
+              link.textContent = text.replace(/^https?:\/\//, "");
+              link.target = "_blank";
+              link.rel = "noopener noreferrer";
+              cell.append(link);
+            } else {
+              cell.textContent = text;
+            }
+            tr.append(cell);
+          });
+          body.append(tr);
+        });
+        table.append(caption, head, body);
+        wrap.append(table);
+      }
+      function setDownloads(csv, json, stem) {
+        attach(document.getElementById("csv-link"), csv, stem + ".csv", "text/csv");
+        attach(document.getElementById("json-link"), json, stem + ".json", "application/json");
+      }
+      function attach(anchor, text, filename, mime) {
+        hideDownload(anchor);
+        var blob = new Blob([text], { type: mime });
+        var url = URL.createObjectURL(blob);
+        anchor.href = url;
+        anchor.download = filename;
+        anchor.dataset.objectUrl = url;
+        anchor.hidden = false;
+      }
+      function hideDownload(anchor) {
+        if (anchor.dataset.objectUrl) {
+          URL.revokeObjectURL(anchor.dataset.objectUrl);
+          delete anchor.dataset.objectUrl;
+        }
+        anchor.hidden = true;
+        anchor.removeAttribute("href");
+      }
+      function toCsv(columns, rows) {
+        function esc(value) {
+          var text = value === null || value === undefined ? "" : String(value);
+          if (/[",\n\r]/.test(text)) return '"' + text.replace(/"/g, '""') + '"';
+          return text;
+        }
+        var lines = [columns.join(",")];
+        rows.forEach(function (row) {
+          lines.push(columns.map(function (column) { return esc(row[column]); }).join(","));
+        });
+        return lines.join("\n") + "\n";
+      }
+    })();
+  </script>
+</body>
+</html>

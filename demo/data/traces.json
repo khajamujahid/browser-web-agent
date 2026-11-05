@@ -1,0 +1,181 @@
+{
+  "runs": [
+    {
+      "id": "hn_top5",
+      "label": "Hacker News top 5",
+      "result": {
+        "goal": "Get the top 5 Hacker News titles and save them to CSV",
+        "mode": "offline",
+        "planner": "rules",
+        "export": "csv",
+        "steps": [
+          {
+            "n": 1,
+            "op": "parse",
+            "detail": "Hacker News front page",
+            "observation": "Top 5 stories. Export CSV. Rules planner, no API call.",
+            "ok": true
+          },
+          {
+            "n": 2,
+            "op": "goto",
+            "detail": "fixture:hackernews.html",
+            "observation": "Page title: Hacker News",
+            "ok": true
+          },
+          {
+            "n": 3,
+            "op": "extract",
+            "detail": "Front-page stories",
+            "observation": "Found 12 stories.",
+            "ok": true
+          },
+          {
+            "n": 4,
+            "op": "limit",
+            "detail": "Keep 5",
+            "observation": "Kept 5.",
+            "ok": true
+          }
+        ],
+        "columns": [
+          "rank",
+          "title",
+          "url",
+          "points",
+          "comments"
+        ],
+        "rows": [
+          {
+            "rank": 1,
+            "title": "Show HN: A browser agent that writes CSV, then stops",
+            "url": "https://example.com/webhands",
+            "points": 142,
+            "comments": 38
+          },
+          {
+            "rank": 2,
+            "title": "Playwright traces got small enough to read",
+            "url": "https://example.com/traces",
+            "points": 318,
+            "comments": 96
+          },
+          {
+            "rank": 3,
+            "title": "Local-first agents for people who do not want a cloud browser",
+            "url": "https://example.com/local-first",
+            "points": 256,
+            "comments": 74
+          },
+          {
+            "rank": 4,
+            "title": "CSS selectors, explained without the magic",
+            "url": "https://example.com/selectors",
+            "points": 201,
+            "comments": 51
+          },
+          {
+            "rank": 5,
+            "title": "Ask HN: How do you test scrapers with the network unplugged?",
+            "url": "https://example.com/offline-tests",
+            "points": 178,
+            "comments": 143
+          }
+        ]
+      }
+    },
+    {
+      "id": "python_books",
+      "label": "Python books under $30",
+      "result": {
+        "goal": "Search the bookstore for Python books under $30 and save them to JSON",
+        "mode": "offline",
+        "planner": "rules",
+        "export": "json",
+        "steps": [
+          {
+            "n": 1,
+            "op": "parse",
+            "detail": "Bookstore search",
+            "observation": "Query \"Python\". Price under 30. Export JSON. Rules planner, no API call.",
+            "ok": true
+          },
+          {
+            "n": 2,
+            "op": "goto",
+            "detail": "fixture:bookstore.html",
+            "observation": "Page title: Corner Bookstore",
+            "ok": true
+          },
+          {
+            "n": 3,
+            "op": "type",
+            "detail": "#q",
+            "observation": "Typed \"Python\" into the search box.",
+            "ok": true
+          },
+          {
+            "n": 4,
+            "op": "click",
+            "detail": "#mode-lt",
+            "observation": "Set the price comparison to under.",
+            "ok": true
+          },
+          {
+            "n": 5,
+            "op": "type",
+            "detail": "#max",
+            "observation": "Typed \"30\" into the max price.",
+            "ok": true
+          },
+          {
+            "n": 6,
+            "op": "click",
+            "detail": "#search",
+            "observation": "Submitted the search form.",
+            "ok": true
+          },
+          {
+            "n": 7,
+            "op": "extract",
+            "detail": "Matching books",
+            "observation": "Found 4 books.",
+            "ok": true
+          }
+        ],
+        "columns": [
+          "title",
+          "author",
+          "price",
+          "format"
+        ],
+        "rows": [
+          {
+            "title": "Think Python",
+            "author": "Allen B. Downey",
+            "price": "15.00",
+            "format": "print"
+          },
+          {
+            "title": "Automate the Boring Stuff with Python",
+            "author": "Al Sweigart",
+            "price": "0.00",
+            "format": "digital"
+          },
+          {
+            "title": "Python Crash Course",
+            "author": "Eric Matthes",
+            "price": "24.99",
+            "format": "print"
+          },
+          {
+            "title": "Web Scraping with Python",
+            "author": "Ryan Mitchell",
+            "price": "29.99",
+            "format": "print"
+          }
+        ]
+      }
+    }
+  ]
+}

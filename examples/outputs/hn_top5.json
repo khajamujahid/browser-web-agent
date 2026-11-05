@@ -1,0 +1,80 @@
+{
+  "goal": "Get the top 5 Hacker News titles and save them to CSV",
+  "mode": "offline",
+  "planner": "rules",
+  "export": "csv",
+  "steps": [
+    {
+      "n": 1,
+      "op": "parse",
+      "detail": "Hacker News front page",
+      "observation": "Top 5 stories. Export CSV. Rules planner, no API call.",
+      "ok": true
+    },
+    {
+      "n": 2,
+      "op": "goto",
+      "detail": "fixture:hackernews.html",
+      "observation": "Page title: Hacker News",
+      "ok": true
+    },
+    {
+      "n": 3,
+      "op": "extract",
+      "detail": "Front-page stories",
+      "observation": "Found 12 stories.",
+      "ok": true
+    },
+    {
+      "n": 4,
+      "op": "limit",
+      "detail": "Keep 5",
+      "observation": "Kept 5.",
+      "ok": true
+    }
+  ],
+  "columns": [
+    "rank",
+    "title",
+    "url",
+    "points",
+    "comments"
+  ],
+  "rows": [
+    {
+      "rank": 1,
+      "title": "Show HN: A browser agent that writes CSV, then stops",
+      "url": "https://example.com/webhands",
+      "points": 142,
+      "comments": 38
+    },
+    {
+      "rank": 2,
+      "title": "Playwright traces got small enough to read",
+      "url": "https://example.com/traces",
+      "points": 318,
+      "comments": 96
+    },
+    {
+      "rank": 3,
+      "title": "Local-first agents for people who do not want a cloud browser",
+      "url": "https://example.com/local-first",
+      "points": 256,
+      "comments": 74
+    },
+    {
+      "rank": 4,
+      "title": "CSS selectors, explained without the magic",
+      "url": "https://example.com/selectors",
+      "points": 201,
+      "comments": 51
+    },
+    {
+      "rank": 5,
+      "title": "Ask HN: How do you test scrapers with the network unplugged?",
+      "url": "https://example.com/offline-tests",
+      "points": 178,
+      "comments": 143
+    }
+  ]
+}

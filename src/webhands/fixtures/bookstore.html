@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Corner Bookstore</title>
+  <style>
+    :root { color-scheme: light; }
+    body { margin: 0; background: #f3efe4; color: #1b1914; font: 16px/1.45 Georgia, serif; }
+    header, main { max-width: 46rem; margin: 0 auto; padding: 24px 20px; }
+    header { padding-bottom: 0; }
+    h1 { font-weight: 600; font-size: 2rem; margin: 0 0 8px; }
+    .lede { margin: 0; color: #5c564c; }
+    form { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: end; margin: 20px 0; }
+    label { display: block; font: 12px/1.3 ui-monospace, monospace; letter-spacing: 0.04em; text-transform: uppercase; }
+    input[type="search"], input[type="number"] { margin-top: 4px; border: 1px solid #1b1914; background: #fffdf8; padding: 8px 10px; font: 15px/1.3 Georgia, serif; width: 16rem; }
+    fieldset { border: 1px solid #d4ccbc; margin: 0; padding: 8px 10px; }
+    legend { font: 12px/1.3 ui-monospace, monospace; letter-spacing: 0.04em; text-transform: uppercase; }
+    button { background: #1b1914; color: #f3efe4; border: 0; padding: 10px 14px; font: 14px/1 ui-monospace, monospace; cursor: pointer; }
+    #status { font: 13px/1.4 ui-monospace, monospace; min-height: 1.4em; }
+    article { display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; padding: 14px 0; border-top: 1px solid #d4ccbc; }
+    article.is-hidden { display: none; }
+    h2 { grid-column: 1; margin: 0; font-size: 1.25rem; }
+    .price { grid-column: 2; grid-row: 1 / span 2; margin: 0; color: #c2410c; font-variant-numeric: tabular-nums; }
+    .by, .fmt { margin: 0; color: #5c564c; }
+    .by { grid-column: 1; }
+    .fmt { grid-column: 2; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Corner Bookstore</h1>
+    <p class="lede">A local catalog. Search the title or author, then set a price ceiling.</p>
+  </header>
+  <main>
+    <form id="search-form">
+      <div>
+        <label for="q">Search</label>
+        <input id="q" name="q" type="search" placeholder="Title or author" />
+      </div>
+      <fieldset>
+        <legend>Price ceiling</legend>
+        <label><input id="mode-lt" type="radio" name="pmode" value="lt" checked /> Under</label>
+        <label><input id="mode-lte" type="radio" name="pmode" value="lte" /> At most</label>
+      </fieldset>
+      <div>
+        <label for="max">Max price</label>
+        <input id="max" name="max" type="number" min="0" step="0.01" placeholder="Any" />
+      </div>
+      <button id="search" type="submit">Search</button>
+    </form>
+    <p id="status">Search to narrow the table.</p>
+    <section id="catalog">
+      <article class="book" data-title="Think Python" data-author="Allen B. Downey" data-price="15.00" data-cents="1500" data-format="print">
+        <h2>Think Python</h2>
+        <p class="price">$15.00</p>
+        <p class="by">Allen B. Downey</p>
+        <p class="fmt">print</p>
+      </article>
+      <article class="book" data-title="Automate the Boring Stuff with Python" data-author="Al Sweigart" data-price="0.00" data-cents="0" data-format="digital">
+        <h2>Automate the Boring Stuff with Python</h2>
+        <p class="price">$0.00</p>
+        <p class="by">Al Sweigart</p>
+        <p class="fmt">digital</p>
+      </article>
+      <article class="book" data-title="Python Crash Course" data-author="Eric Matthes" data-price="24.99" data-cents="2499" data-format="print">
+        <h2>Python Crash Course</h2>
+        <p class="price">$24.99</p>
+        <p class="by">Eric Matthes</p>
+        <p class="fmt">print</p>
+      </article>
+      <article class="book" data-title="Web Scraping with Python" data-author="Ryan Mitchell" data-price="29.99" data-cents="2999" data-format="print">
+        <h2>Web Scraping with Python</h2>
+        <p class="price">$29.99</p>
+        <p class="by">Ryan Mitchell</p>
+        <p class="fmt">print</p>
+      </article>
+      <article class="book" data-title="Fluent Python" data-author="Luciano Ramalho" data-price="54.99" data-cents="5499" data-format="print">
+        <h2>Fluent Python</h2>
+        <p class="price">$54.99</p>
+        <p class="by">Luciano Ramalho</p>
+        <p class="fmt">print</p>
+      </article>
+      <article class="book" data-title="Eloquent JavaScript" data-author="Marijn Haverbeke" data-price="19.99" data-cents="1999" data-format="print">
+        <h2>Eloquent JavaScript</h2>
+        <p class="price">$19.99</p>
+        <p class="by">Marijn Haverbeke</p>
+        <p class="fmt">print</p>
+      </article>
+      <article class="book" data-title="Designing Data-Intensive Applications" data-author="Martin Kleppmann" data-price="45.00" data-cents="4500" data-format="print">
+        <h2>Designing Data-Intensive Applications</h2>
+        <p class="price">$45.00</p>
+        <p class="by">Martin Kleppmann</p>
+        <p class="fmt">print</p>
+      </article>
+      <article class="book" data-title="The Pragmatic Programmer" data-author="David Thomas, Andrew Hunt" data-price="47.00" data-cents="4700" data-format="print">
+        <h2>The Pragmatic Programmer</h2>
+        <p class="price">$47.00</p>
+        <p class="by">David Thomas, Andrew Hunt</p>
+        <p class="fmt">print</p>
+      </article>
+      <article class="book" data-title="Clean Code" data-author="Robert C. Martin" data-price="32.00" data-cents="3200" data-format="print">
+        <h2>Clean Code</h2>
+        <p class="price">$32.00</p>
+        <p class="by">Robert C. Martin</p>
+        <p class="fmt">print</p>
+      </article>
+      <article class="book" data-title="The Hundred-Page Machine Learning Book" data-author="Andriy Burkov" data-price="20.00" data-cents="2000" data-format="print">
+        <h2>The Hundred-Page Machine Learning Book</h2>
+        <p class="price">$20.00</p>
+        <p class="by">Andriy Burkov</p>
+        <p class="fmt">print</p>
+      </article>
+      <article class="book" data-title="Hands-On Machine Learning" data-author="Aurélien Géron" data-price="59.99" data-cents="5999" data-format="print">
+        <h2>Hands-On Machine Learning</h2>
+        <p class="price">$59.99</p>
+        <p class="by">Aurélien Géron</p>
+        <p class="fmt">print</p>
+      </article>
+      <article class="book" data-title="JavaScript: The Good Parts" data-author="Douglas Crockford" data-price="18.00" data-cents="1800" data-format="print">
+        <h2>JavaScript: The Good Parts</h2>
+        <p class="price">$18.00</p>
+        <p class="by">Douglas Crockford</p>
+        <p class="fmt">print</p>
+      </article>
+    </section>
+  </main>
+  <script>
+    (function () {
+      var form = document.getElementById("search-form");
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        var query = document.getElementById("q").value.trim().toLowerCase();
+        var maxRaw = document.getElementById("max").value.trim();
+        var maxCents = maxRaw === "" ? null : Math.round(Number(maxRaw) * 100);
+        var selected = document.querySelector("input[name='pmode']:checked");
+        var mode = selected ? selected.value : "lt";
+        var shown = 0;
+        document.querySelectorAll("article.book").forEach(function (book) {
+          var hay = (book.dataset.title + " " + book.dataset.author).toLowerCase();
+          var cents = Number(book.dataset.cents);
+          var textOk = query === "" || hay.indexOf(query) !== -1;
+          var priceOk = true;
+          if (maxCents !== null && !Number.isNaN(maxCents)) {
+            priceOk = mode === "lte" ? cents <= maxCents : cents < maxCents;
+          }
+          var hide = !(textOk && priceOk);
+          book.classList.toggle("is-hidden", hide);
+          if (!hide) shown += 1;
+        });
+        var noun = shown === 1 ? " book on the table." : " books on the table.";
+        document.getElementById("status").textContent = shown + noun;
+      });
+    })();
+  </script>
+</body>
+</html>

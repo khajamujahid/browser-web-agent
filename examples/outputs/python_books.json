@@ -1,0 +1,89 @@
+{
+  "goal": "Search the bookstore for Python books under $30 and save them to JSON",
+  "mode": "offline",
+  "planner": "rules",
+  "export": "json",
+  "steps": [
+    {
+      "n": 1,
+      "op": "parse",
+      "detail": "Bookstore search",
+      "observation": "Query \"Python\". Price under 30. Export JSON. Rules planner, no API call.",
+      "ok": true
+    },
+    {
+      "n": 2,
+      "op": "goto",
+      "detail": "fixture:bookstore.html",
+      "observation": "Page title: Corner Bookstore",
+      "ok": true
+    },
+    {
+      "n": 3,
+      "op": "type",
+      "detail": "#q",
+      "observation": "Typed \"Python\" into the search box.",
+      "ok": true
+    },
+    {
+      "n": 4,
+      "op": "click",
+      "detail": "#mode-lt",
+      "observation": "Set the price comparison to under.",
+      "ok": true
+    },
+    {
+      "n": 5,
+      "op": "type",
+      "detail": "#max",
+      "observation": "Typed \"30\" into the max price.",
+      "ok": true
+    },
+    {
+      "n": 6,
+      "op": "click",
+      "detail": "#search",
+      "observation": "Submitted the search form.",
+      "ok": true
+    },
+    {
+      "n": 7,
+      "op": "extract",
+      "detail": "Matching books",
+      "observation": "Found 4 books.",
+      "ok": true
+    }
+  ],
+  "columns": [
+    "title",
+    "author",
+    "price",
+    "format"
+  ],
+  "rows": [
+    {
+      "title": "Think Python",
+      "author": "Allen B. Downey",
+      "price": "15.00",
+      "format": "print"
+    },
+    {
+      "title": "Automate the Boring Stuff with Python",
+      "author": "Al Sweigart",
+      "price": "0.00",
+      "format": "digital"
+    },
+    {
+      "title": "Python Crash Course",
+      "author": "Eric Matthes",
+      "price": "24.99",
+      "format": "print"
+    },
+    {
+      "title": "Web Scraping with Python",
+      "author": "Ryan Mitchell",
+      "price": "29.99",
+      "format": "print"
+    }
+  ]
+}
