@@ -159,7 +159,7 @@ Presets on the page are the two examples above. Other sentences that match the s
 
 Live replay: [https://webhands-mocha.vercel.app](https://webhands-mocha.vercel.app)
 
-The page plays the recorded offline runs, including the step log and the table. A goal it does not have on file does not produce invented rows.
+The page plays the recorded offline runs, including the step log and the table. A goal it does not have on file does not produce invented rows. `GET /api/health` returns `{ "ok": true, "engine": "replay" }` so that check is a 200 instead of a 404. It does not start a browser.
 
 Playwright cannot run on Vercel. A serverless function has no long-lived Chromium process, and the browser binary is far larger than the function bundle limit (Chromium alone is about 190 MB). The hosted page is a replay, not a cloud browser. Run `webhands serve` when you want a live session.
 

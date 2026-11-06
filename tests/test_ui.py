@@ -127,6 +127,16 @@ def test_static_demo_replays_a_real_run_and_refuses_to_invent_one():
         thread.join(timeout=5)
 
 
+def test_hosted_health_stays_a_replay():
+    import json
+
+    health = json.loads((ROOT / "demo" / "health.json").read_text(encoding="utf-8"))
+    assert health["ok"] is True
+    assert health["engine"] != "playwright"
+    config = json.loads((ROOT / "demo" / "vercel.json").read_text(encoding="utf-8"))
+    assert {"source": "/api/health", "destination": "/health.json"} in config["rewrites"]
+
+
 def test_package_ui_matches_the_demo_page():
     package = (ROOT / "src" / "webhands" / "ui" / "index.html").read_text(encoding="utf-8")
     demo = (ROOT / "demo" / "index.html").read_text(encoding="utf-8")
